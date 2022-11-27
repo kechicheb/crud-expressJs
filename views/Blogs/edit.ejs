@@ -1,0 +1,61 @@
+<html lang="en">
+  <%- include("../partials/head.ejs") %>
+
+  <body>
+    <%- include("../partials/nav.ejs") %>
+
+    <div class="create-blog content">
+      <form>
+        <label for="title">Blog title:</label>
+        <input
+          type="text"
+          value="<%= blog.title %>"
+          id="title"
+          name="title"
+          required
+        />
+        <label for="snippet">Blog snippet:</label>
+        <input
+          type="text"
+          value="<%= blog.snippet %>"
+          id="snippet"
+          name="snippet"
+          required
+        />
+        <label for="body">Blog body:</label>
+        <textarea id="body" name="body" required>
+        <%= blog.body %></textarea
+        >
+        <button data-doc="<%= blog._id%>">Submit</button>
+      </form>
+    </div>
+
+    <%- include("../partials/footer.ejs") %>
+
+    <script>
+      const trashcan = document.querySelector("button");
+      const title = document.querySelector("#title");
+      const snippet = document.querySelector("#snippet");
+      const body = document.querySelector("#body");
+
+      trashcan.addEventListener("click", (e) => {
+        const endpoint = `/blogs/edit/${trashcan.dataset.doc}`;
+
+        fetch(endpoint, {
+          method: "PUT", // declares HTTP request method
+          headers: {
+            "Content-Type": "application/json", // declares format of data
+          },
+          body: JSON.stringify({
+            title: `${title.value}`,
+            snippet: `${snippet.value}`,
+            body: `${body.value}`,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => (window.location.href = data.redirect))
+          .catch((err) => console.log(err));
+      });
+    </script>
+  </body>
+</html>
